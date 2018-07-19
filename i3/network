@@ -1,0 +1,60 @@
+#!/bin/bash
+
+INTERFACE="${BLOCK_INSTANCE:-enp0s25}"
+
+state="$(cat /sys/class/net/$INTERFACE/operstate)"
+
+if [ "$state" != "up" ]; then # if device is not up, show nothing
+	exit 0
+fi
+
+speed="$(cat /sys/class/net/$INTERFACE/speed 2> /dev/null)"
+if [ "$speed" == "1000" ]; then
+	speed="1Gbit/s"
+elif [ $speed ]; then
+	speed="$speed""Mbit/s"
+else
+	speed=""
+fi
+
+ipaddr="$(nmcli device show $INTERFACE | awk '/ADDRESS/{printf "%s\t", $2}' ; printf '\n')"
+ipaddr="${ipaddr:-0.0.0.0}"
+gateway="$(nmcli device show $INTERFACE | awk '/GATEWAY/{print $2}')"
+dns="$(nmcli device show $INTERFACE | awk '/DNS/{printf "%s\t", $2}' ; printf '\n')"
+
+color="#555555"
+
+netname=$(nmcli device show $INTERFACE | awk '/GENERAL.CONNECTION/{print $2}')
+
+case $BLOCK_INSTANCE in
+		enp0s25)
+			FULL_TEXT=""
+			SHORT_TEXT=""
+		;;
+		wlp3s0)
+			SSID_NAME=$(iwgetid -r)
+			QUALITY=$(grep $INTERFACE /proc/net/wireless | awk '{ print int($3 * 100 / 70) }')
+
+			if [[ $QUALITY -ge 80 ]]; then
+				color="#00FF00"
+			elif [[ $QUALITY -ge 60 ]]; then
+				color="#FFF600"
+			elif [[ $QUALITY -ge 40 ]]; then
+				color="#FFAE00"
+			else
+				color="#FF0000"
+			fi
+
+			FULL_TEXT="${SSID_NAME} <span color='$color'>$(nmcli --fields ACTIVE,BARS device wifi list | awk '/yes/{print $2}')</span>"
+			SHORT_TEXT="$(nmcli --fields ACTIVE,BARS device wifi list | awk '/yes/{print $2}')"
+
+
+
+		;;
+esac
+
+# full text
+echo $FULL_TEXT
+
+# short text
+echo "$SHORT_TEXT"
