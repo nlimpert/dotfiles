@@ -1,0 +1,22 @@
+set nocompatible        " must be first line
+
+syntax on
+"colorscheme base16-oblivion
+set background=dark
+"set number
+set history=1000
+set smartcase
+set incsearch
+set autoindent
+set noexpandtab
+set encoding=utf-8
+set fileencodings=utf-8
+set tabstop=4
+"set mouse=a
+set ruler
+set undofile
+set undodir=~/.cache/vim_undo/
+set guifont=Profont\ 10
+
+set list
+set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
