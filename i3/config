@@ -230,4 +230,5 @@ bindsym $mod+Shift+s exec pavucontrol
 
 #### CUSTOM EXECUTABLES ####
 exec --no-startup-id nm-applet
-
+exec --no-startup-id ~/opt/Nextcloud/Nextcloud-2.3.3-x86_64.AppImage
+exec --no-startup-id owncloud
